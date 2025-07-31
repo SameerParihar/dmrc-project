@@ -26,12 +26,18 @@ db.connect()
     process.exit(1);
   });
 
+
 app.get("/", (req, res) => {
   const selectedStation = req.query.station || "vaishali";
   res.render("index.ejs", {
     isHome: true,
     stationName: selectedStation
   });
+});
+
+app.post("/submit", (req, res) => {
+  const selectedStation = req.body.station || "vaishali";
+  res.redirect("/?station=" + selectedStation);
 });
 
 app.get("/waste", (req, res) => {
@@ -151,6 +157,8 @@ app.post("/update/:table", async (req, res) => {
     res.status(500).send("Update failed: " + err.message);
   }
 });
+
+
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

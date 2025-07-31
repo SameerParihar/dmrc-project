@@ -1,58 +1,56 @@
 <%- include("header.ejs") %>
+
 <div>
-    <h3 class="t-center">Waste Manager</h3>
-    <div class="bins">
-        <div>
-             <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none">
-  <defs>
-    <linearGradient id="animatedGreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#006400">
-        <animate attributeName="stop-color" values="#006400;#90ee90;#006400" dur="3s" repeatCount="indefinite" />
-      </stop>
-      <stop offset="100%" stop-color="#90ee90">
-        <animate attributeName="stop-color" values="#90ee90;#006400;#90ee90" dur="3s" repeatCount="indefinite" />
-      </stop>
-    </linearGradient>
-  </defs>
-
-  <path
-    d="M10 10V16M14 10V16M4 6H20M15 6V5C15 3.89543 14.1046 3 13 3H11C9.89543 3 9 3.89543 9 5V6M18 6V14M18 18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V13M6 9V6"
-    stroke="url(#animatedGreenGradient)"
-    stroke-width="1.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-</svg>
-    <a href="/green_bins" class="btn btn-secondary">Green Bin</a>
-        </div>
-       <div>
-         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none">
-  <defs>
-    <linearGradient id="animatedBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#0000ff"> <!-- blue -->
-        <animate attributeName="stop-color" values="#0000ff;#add8e6;#0000ff" dur="3s" repeatCount="indefinite" />
-      </stop>
-      <stop offset="100%" stop-color="#add8e6"> <!-- light blue -->
-        <animate attributeName="stop-color" values="#add8e6;#0000ff;#add8e6" dur="3s" repeatCount="indefinite" />
-      </stop>
-    </linearGradient>
-  </defs>
-
-  <path
-    d="M10 10V16M14 10V16M4 6H20M15 6V5C15 3.89543 14.1046 3 13 3H11C9.89543 3 9 3.89543 9 5V6M18 6V14M18 18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V13M6 9V6"
-    stroke="url(#animatedBlueGradient)"
-    stroke-width="1.5"
-    stroke-linecap="round"
-    stroke-linejoin="round"
-    fill="none"
-  />
-</svg>
-<a href="/blue_bins" class="btn btn-secondary">Blue Bin</a>
-       </div>
-       
-
-
+  <h3 class="t-center">Waste Manager</h3>
+  <div class="bins">
+    <div>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none">
+        <defs>
+          <linearGradient id="animatedGreenGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#006400">
+              <animate attributeName="stop-color" values="#006400;#90ee90;#006400" dur="3s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stop-color="#90ee90">
+              <animate attributeName="stop-color" values="#90ee90;#006400;#90ee90" dur="3s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+        </defs>
+        <path
+          d="M10 10V16M14 10V16M4 6H20M15 6V5C15 3.89543 14.1046 3 13 3H11C9.89543 3 9 3.89543 9 5V6M18 6V14M18 18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V13M6 9V6"
+          stroke="url(#animatedGreenGradient)"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+      </svg>
+      <a href="/green_bins?station=<%= stationName %>" class="btn btn-secondary">Green Bin</a>
     </div>
+
+    <div>
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet" fill="none">
+        <defs>
+          <linearGradient id="animatedBlueGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#0000ff">
+              <animate attributeName="stop-color" values="#0000ff;#add8e6;#0000ff" dur="3s" repeatCount="indefinite" />
+            </stop>
+            <stop offset="100%" stop-color="#add8e6">
+              <animate attributeName="stop-color" values="#add8e6;#0000ff;#add8e6" dur="3s" repeatCount="indefinite" />
+            </stop>
+          </linearGradient>
+        </defs>
+        <path
+          d="M10 10V16M14 10V16M4 6H20M15 6V5C15 3.89543 14.1046 3 13 3H11C9.89543 3 9 3.89543 9 5V6M18 6V14M18 18C18 19.1046 17.1046 20 16 20H8C6.89543 20 6 19.1046 6 18V13M6 9V6"
+          stroke="url(#animatedBlueGradient)"
+          stroke-width="1.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          fill="none"
+        />
+      </svg>
+      <a href="/blue_bins?station=<%= stationName %>" class="btn btn-secondary">Blue Bin</a>
+    </div>
+  </div>
 </div>
-<%- include("footer.ejs") %>
+
+<%- include("footer.ejs", { stationName: stationName }) %>
