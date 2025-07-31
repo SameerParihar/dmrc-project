@@ -1,0 +1,13 @@
+</main>
+<footer>
+  <form class="footer" action="/submit" method="POST">
+    <label for="station-select" class="dropdowntext">Current station:</label>
+    <select name="station" id="station-select" class="form-select" style="width: 200px;">
+      <option value="vaishali" <%= stationName === 'vaishali' ? 'selected' : '' %>>vaishali</option>
+      <option value="anand vihar" <%= stationName === 'anand vihar' ? 'selected' : '' %>>anand vihar</option>
+      <option value="mayur vihar" <%= stationName === 'mayur vihar' ? 'selected' : '' %>>mayur vihar</option>
+    </select>
+    <button type="submit" class="btn btn-secondary">Submit</button>
+  </form>
+</footer>
+</html>
