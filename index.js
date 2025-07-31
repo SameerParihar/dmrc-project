@@ -12,105 +12,45 @@ app.use(express.static("public"));
 app.use(bodyparser.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
-// Station DB URLs
-const STATION_URLS = {
-  "vaishali": process.env.DB_VAISHALI_URL,
-  "anand vihar": process.env.DB_ANAND_VIHAR_URL,
-  "mayur vihar": process.env.DB_MAYUR_VIHAR_URL,
-};
+const stationName = "vaishali"; // always use this DB
 
-console.log("ENV CHECK:");
-for (const [key, val] of Object.entries(STATION_URLS)) {
-  console.log(`${key}: ${val}`);
-}
-
-let stationName = "vaishali";
-let db = null;
-
-async function connectToStationDB(name) {
-  const connectionString = STATION_URLS[name];
-  if (!connectionString) {
-    throw new Error(`❌ No DB URL found for station "${name}"`);
-  }
-
-  const useSSL = process.env.NODE_ENV === "production";
-  const client = new pg.Client({
-    connectionString,
-    ssl: useSSL ? { rejectUnauthorized: false } : false,
-  });
-
-  try {
-    await client.connect();
-    console.log(`✅ Connected to database for station "${name}"`);
-    return client;
-  } catch (err) {
-    console.error(`❌ Failed to connect to "${name}" DB:`, err.message);
-    throw err;
-  }
-}
-
-async function setDBConnection(newStation) {
-  if (newStation === stationName && db) return;
-
-  if (!STATION_URLS[newStation]) {
-    throw new Error(`❌ Invalid station "${newStation}"`);
-  }
-
-  if (db) {
-    await db.end();
-    console.log(`🔌 Disconnected from previous DB "${stationName}"`);
-  }
-
-  db = await connectToStationDB(newStation);
-  stationName = newStation;
-}
-
-// Start server after attempting DB connection
-setDBConnection(stationName)
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`🚀 Server running on port ${PORT}`);
-    });
-  })
-  .catch((err) => {
-    console.error("🚨 Initial DB connection failed:", err.message);
-    app.listen(PORT, () => {
-      console.log(`⚠️ Server running without DB on port ${PORT}`);
-    });
-  });
-
-app.post("/submit", async (req, res) => {
-  const selectedStation = req.body.station;
-  try {
-    await setDBConnection(selectedStation);
-    res.redirect("/");
-  } catch (err) {
-    res.status(500).send("DB switch failed: " + err.message);
-  }
+const db = new pg.Client({
+  connectionString: process.env.DB_VAISHALI_URL,
+  ssl: process.env.NODE_ENV === "production" ? { rejectUnauthorized: false } : false,
 });
 
+db.connect()
+  .then(() => console.log("✅ Connected to vaishali DB"))
+  .catch((err) => {
+    console.error("❌ Failed to connect to vaishali DB:", err.message);
+    process.exit(1);
+  });
+
 app.get("/", (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   res.render("index.ejs", {
     isHome: true,
-    stationName
+    stationName: selectedStation
   });
 });
 
 app.get("/waste", (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   res.render("waste.ejs", {
     isHome: false,
-    stationName
+    stationName: selectedStation
   });
 });
 
 app.get("/blue_bins", async (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   try {
-    const result = await db.query("SELECT * FROM blue_bins");
+    const result = await db.query("SELECT * FROM blue_bins WHERE station = $1", [selectedStation]);
     res.render("blue_bins.ejs", {
       isHome: false,
       rows: result.rows,
       tableName: "blue_bins",
-      stationName
+      stationName: selectedStation
     });
   } catch (err) {
     console.error(err);
@@ -119,13 +59,14 @@ app.get("/blue_bins", async (req, res) => {
 });
 
 app.get("/green_bins", async (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   try {
-    const result = await db.query("SELECT * FROM green_bins");
+    const result = await db.query("SELECT * FROM green_bins WHERE station = $1", [selectedStation]);
     res.render("green_bins.ejs", {
       isHome: false,
       rows: result.rows,
       tableName: "green_bins",
-      stationName
+      stationName: selectedStation
     });
   } catch (err) {
     console.error(err);
@@ -134,13 +75,14 @@ app.get("/green_bins", async (req, res) => {
 });
 
 app.get("/chemicals", async (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   try {
-    const result = await db.query("SELECT * FROM chemicals");
+    const result = await db.query("SELECT * FROM chemicals WHERE station = $1", [selectedStation]);
     res.render("chemicals.ejs", {
       isHome: false,
       rows: result.rows,
       tableName: "chemicals",
-      stationName
+      stationName: selectedStation
     });
   } catch (err) {
     console.error(err);
@@ -149,13 +91,14 @@ app.get("/chemicals", async (req, res) => {
 });
 
 app.get("/employee", async (req, res) => {
+  const selectedStation = req.query.station || "vaishali";
   try {
-    const result = await db.query("SELECT * FROM employee");
+    const result = await db.query("SELECT * FROM employee WHERE station = $1", [selectedStation]);
     res.render("employee.ejs", {
       isHome: false,
       rows: result.rows,
       tableName: "employee",
-      stationName
+      stationName: selectedStation
     });
   } catch (err) {
     console.error(err);
@@ -165,6 +108,7 @@ app.get("/employee", async (req, res) => {
 
 app.post("/add/:table", async (req, res) => {
   const table = req.params.table;
+  const selectedStation = req.body.station || "vaishali";
   const cols = Object.keys(req.body);
   const vals = Object.values(req.body);
   const placeholders = cols.map((_, i) => `$${i + 1}`).join(", ");
@@ -174,7 +118,7 @@ app.post("/add/:table", async (req, res) => {
       `INSERT INTO ${table} (${cols.join(", ")}) VALUES (${placeholders})`,
       vals
     );
-    res.redirect("/" + table);
+    res.redirect(`/${table}?station=${selectedStation}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Add failed: " + err.message);
@@ -183,7 +127,7 @@ app.post("/add/:table", async (req, res) => {
 
 app.post("/update/:table", async (req, res) => {
   const table = req.params.table;
-  const { key, keyValue, ...data } = req.body;
+  const { key, keyValue, station, ...data } = req.body;
 
   const updates = Object.entries(data)
     .filter(([_, v]) => v.trim() !== "")
@@ -194,16 +138,20 @@ app.post("/update/:table", async (req, res) => {
     .filter(([_, v]) => v.trim() !== "")
     .map(([_, v]) => v);
 
-  values.push(keyValue); // WHERE clause
+  values.push(keyValue); // WHERE key = $N
 
   try {
     await db.query(
       `UPDATE ${table} SET ${updates} WHERE ${key} = $${values.length}`,
       values
     );
-    res.redirect("/" + table);
+    res.redirect(`/${table}?station=${station || "vaishali"}`);
   } catch (err) {
     console.error(err);
     res.status(500).send("Update failed: " + err.message);
   }
+});
+
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
 });
