@@ -65,11 +65,19 @@ async function setDBConnection(newStation) {
   stationName = newStation;
 }
 
-// Initial connection
-setDBConnection(stationName).catch((err) => {
-  console.error("🚨 Initial DB connection failed:", err.message);
-  process.exit(1);
-});
+// Start server after attempting DB connection
+setDBConnection(stationName)
+  .then(() => {
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+    });
+  })
+  .catch((err) => {
+    console.error("🚨 Initial DB connection failed:", err.message);
+    app.listen(PORT, () => {
+      console.log(`⚠️ Server running without DB on port ${PORT}`);
+    });
+  });
 
 app.post("/submit", async (req, res) => {
   const selectedStation = req.body.station;
@@ -198,8 +206,4 @@ app.post("/update/:table", async (req, res) => {
     console.error(err);
     res.status(500).send("Update failed: " + err.message);
   }
-});
-
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
 });
