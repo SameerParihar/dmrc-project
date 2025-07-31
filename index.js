@@ -26,7 +26,6 @@ db.connect()
     process.exit(1);
   });
 
-
 app.get("/", (req, res) => {
   const selectedStation = req.query.station || "vaishali";
   res.render("index.ejs", {
@@ -157,8 +156,6 @@ app.post("/update/:table", async (req, res) => {
     res.status(500).send("Update failed: " + err.message);
   }
 });
-
-
 
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT}`);

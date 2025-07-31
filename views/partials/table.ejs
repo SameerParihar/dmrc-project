@@ -1,56 +1,57 @@
 <% if (rows && rows.length > 0) { %>
   <div class="table-container">
-  <div class="table-responsive">
-    <table class="table custom-table mx-auto">
-      <thead>
-        <tr>
-          <% Object.keys(rows[0]).forEach(col => { %>
-            <th><%= col %></th>
-          <% }) %>
-        </tr>
-      </thead>
-      <tbody>
-        <% rows.forEach(row => { %>
+    <div class="table-responsive">
+      <table class="table custom-table mx-auto">
+        <thead>
           <tr>
-            <% Object.values(row).forEach(val => { %>
-              <td><%= val %></td>
+            <% Object.keys(rows[0]).forEach(col => { %>
+              <th><%= col %></th>
             <% }) %>
           </tr>
-        <% }) %>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- updating and adding data-->
-<h3 class="text-center my-4">Add New Entry</h3>
-<form action="/add/<%= tableName %>" method="POST" class="mb-5 text-white">
-  <% Object.keys(rows[0]).forEach(col => { %>
-    <div class="mb-3">
-      <label class="form-label"><%= col %></label>
-      <input type="text" name="<%= col %>" class="form-control" required />
+        </thead>
+        <tbody>
+          <% rows.forEach(row => { %>
+            <tr>
+              <% Object.values(row).forEach(val => { %>
+                <td><%= val %></td>
+              <% }) %>
+            </tr>
+          <% }) %>
+        </tbody>
+      </table>
     </div>
-  <% }) %>
-  <button type="submit" class="btn btn-secondary">Add Entry</button>
-</form>
 
-<!-- Update Entry Form -->
+    <!-- Add New Entry -->
+    <h3 class="text-center my-4">Add New Entry</h3>
+    <form action="/add/<%= tableName %>" method="POST" class="mb-5 text-white">
+      <% Object.keys(rows[0]).forEach(col => {
+           if (col !== "id") { %>
+        <div class="mb-3">
+          <label class="form-label"><%= col %></label>
+          <input type="text" name="<%= col %>" class="form-control" required />
+        </div>
+      <% } }) %>
+      <button type="submit" class="btn btn-secondary">Add Entry</button>
+    </form>
+
+    <!-- Update Entry -->
 <h3 class="text-center my-4">Update Entry</h3>
 <form action="/update/<%= tableName %>" method="POST" class="mb-5 text-white">
+  <input type="hidden" name="key" value="id" />
+
   <div class="mb-3">
-    <label class="form-label">Primary Key Column Name</label>
-    <input type="text" name="key" class="form-control" placeholder="e.g., id" required />
-  </div>
-  <div class="mb-3">
-    <label class="form-label">Primary Key Value</label>
+    <label class="form-label">ID of Row to Update</label>
     <input type="text" name="keyValue" class="form-control" required />
   </div>
 
-  <% Object.keys(rows[0]).forEach(col => { %>
+  <% Object.keys(rows[0]).forEach(col => {
+       if (col !== "id") { %>
     <div class="mb-3">
       <label class="form-label"><%= col %></label>
       <input type="text" name="<%= col %>" class="form-control" />
     </div>
-  <% }) %>
+  <% } }) %>
+
   <button type="submit" class="btn btn-secondary">Update Entry</button>
 </form>
 
