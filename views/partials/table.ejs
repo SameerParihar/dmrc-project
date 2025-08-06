@@ -7,21 +7,34 @@
             <% Object.keys(rows[0]).forEach(col => { %>
               <th><%= col %></th>
             <% }) %>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>
           <% rows.forEach(row => { %>
-            <tr>
-              <% Object.values(row).forEach(val => { %>
-                <td><%= val %></td>
-              <% }) %>
-            </tr>
-          <% }) %>
+  <tr>
+    <% Object.entries(row).forEach(([col, val]) => { %>
+      <td><%= val %></td>
+    <% }) %>
+
+    <!-- delete --> 
+    <td>
+      <form action="/delete/<%= tableName %>" method="POST" onsubmit="return confirm('Are you sure you want to delete this row?');">
+        <input type="hidden" name="id" value="<%= row.id %>" />
+        <input type="hidden" name="station" value="<%= stationName %>" />
+        <button type="submit" class="btn btn-link text-danger p-0">
+          🗑️
+        </button>
+      </form>
+    </td>
+  </tr>
+<% }) %>
+
         </tbody>
       </table>
     </div>
 
-    <!-- Add New Entry -->
+    <!-- add row -->
     <h3 class="text-center my-4">Add New Entry</h3>
     <form action="/add/<%= tableName %>" method="POST" class="mb-5 text-white">
       <% Object.keys(rows[0]).forEach(col => {
@@ -34,7 +47,7 @@
       <button type="submit" class="btn btn-secondary">Add Entry</button>
     </form>
 
-    <!-- Update Entry -->
+    <!-- update row -->
 <h3 class="text-center my-4">Update Entry</h3>
 <form action="/update/<%= tableName %>" method="POST" class="mb-5 text-white">
   <input type="hidden" name="key" value="id" />

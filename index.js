@@ -157,6 +157,29 @@ app.post("/update/:table", async (req, res) => {
   }
 });
 
+
+app.post("/delete/:table", async (req, res) => {
+  const table = req.params.table;
+  const { id, station } = req.body;
+
+  if (!id) {
+    return res.status(400).send("Bad Request: 'id' is required for deletion.");
+  }
+
+  try {
+    const result = await db.query(`DELETE FROM ${table} WHERE id = $1`, [id]);
+    if (result.rowCount > 0) {
+      console.log(`Successfully deleted row with id ${id} from table ${table}`);
+    } else {
+      console.log(`No row found with id ${id} in table ${table}`);
+    }
+    res.redirect(`/${table}?station=${station || "vaishali"}`);
+  } catch (err) {
+    console.error("Delete failed:", err);
+    res.status(500).send("Delete failed: " + err.message);
+  }
+});
+
 app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  console.log(` Server running on port ${PORT}`);
 });

@@ -234,3 +234,18 @@ button {
     padding: 8px 12px;
   }
 }
+
+.card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  border-radius: 16px;
+  overflow: hidden;
+  background-color: #474747;
+  color: white;
+  width: 300px;
+  margin: 20px;
+}
+
+
+.card:hover {
+  transform: translateY(-8px);
+}
